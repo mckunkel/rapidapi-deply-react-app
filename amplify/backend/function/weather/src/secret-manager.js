@@ -6,5 +6,8 @@ module.exports = async () => {
   if (!secret) {
     throw new Error('Secret not found')
   }
+  console.log('############')
+
+  console.log(JSON.parse(secret.SecretString))
   return JSON.parse(secret.SecretString)
 }

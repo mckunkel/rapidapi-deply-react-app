@@ -1,15 +1,23 @@
 {
-  "dev": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-rapidapideplyreactap-dev-142012-authRole",
-      "UnauthRoleArn": "arn:aws:iam::410811475474:role/amplify-rapidapideplyreactap-dev-142012-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::410811475474:role/amplify-rapidapideplyreactap-dev-142012-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-rapidapideplyreactap-dev-142012-deployment",
-      "UnauthRoleName": "amplify-rapidapideplyreactap-dev-142012-unauthRole",
-      "StackName": "amplify-rapidapideplyreactap-dev-142012",
-      "StackId": "arn:aws:cloudformation:us-east-1:410811475474:stack/amplify-rapidapideplyreactap-dev-142012/0a018500-1fca-11ed-9827-0e0bf000f0ab",
-      "AmplifyAppId": "dy6qm00lv4c95"
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-rapidapideplyreactap-dev-142012-authRole",
+            "UnauthRoleArn": "arn:aws:iam::410811475474:role/amplify-rapidapideplyreactap-dev-142012-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::410811475474:role/amplify-rapidapideplyreactap-dev-142012-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-rapidapideplyreactap-dev-142012-deployment",
+            "UnauthRoleName": "amplify-rapidapideplyreactap-dev-142012-unauthRole",
+            "StackName": "amplify-rapidapideplyreactap-dev-142012",
+            "StackId": "arn:aws:cloudformation:us-east-1:410811475474:stack/amplify-rapidapideplyreactap-dev-142012/0a018500-1fca-11ed-9827-0e0bf000f0ab",
+            "AmplifyAppId": "dy6qm00lv4c95"
+        },
+        "categories": {
+            "hosting": {
+                "amplifyhosting": {
+                    "appId": "dy6qm00lv4c95",
+                    "type": "cicd"
+                }
+            }
+        }
     }
-  }
 }

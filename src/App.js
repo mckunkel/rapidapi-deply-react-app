@@ -21,12 +21,12 @@ function App() {
       },
     };
   
-    //make edit to redeploy
     API.post('weatherAPI', '/weather', myInit)
       .then((data) => {
         setTempC(data.tempC)
         setTempF(data.tempF)
         setConditions(data.conditions)
+        console.log('test')
       })
       .catch(e => {
         setError(true)
