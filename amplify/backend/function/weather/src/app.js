@@ -47,7 +47,7 @@ app.post('/weather', async function (req, res) {
       headers: {
         "content-type": "application/octet-stream",
         "x-rapidapi-host": "aerisweather1.p.rapidapi.com",
-        "x-rapidapi-key": secretObj["RAPIDAPI-KEY"],
+        "x-rapidapi-key": secretObj["rapidapi"],
         "useQueryString": true
       }
     })
