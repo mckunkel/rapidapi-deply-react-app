@@ -1,84 +1,112 @@
-import React from 'react';
-import './App.css';
-import { API } from 'aws-amplify';
+import React, { Component } from "react";
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import logo from "./logo.svg";
+import Amplify from "@aws-amplify/core";
+import "@aws-amplify/pubsub";
+import API, { graphqlOperation } from "@aws-amplify/api";
+import aws_exports from "./aws-exports"; 
+Amplify.configure(aws_exports);
 
-function App() {
-  let [location, setLocation] = React.useState('')
-  let [tempC, setTempC] = React.useState('')
-  let [tempF, setTempF] = React.useState('')
-  let [conditions, setConditions] = React.useState('')
-  let [loading, setLoading] = React.useState(false)
-  let [error, setError] = React.useState(false)
+const createMessage = `mutation createMessage($message: String!){
+    createMessage(input:{message:$message}) {
+    __typename
+    id
+    message
+    createdAt
+    }
+}
+`;
 
-  const fetchWeather = (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(false)
-  
-    const myInit = {
-      body: {
-        location
-      },
+const onCreateMessage = `subscription onCreateMessage {
+    onCreateMessage {
+    __typename
+    message
+    }
+}`;
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      message: "",
+      value: "",
+      display: false
     };
-  
-    API.post('weatherAPI', '/weather', myInit)
-      .then((data) => {
-        setTempC(data.tempC)
-        setTempF(data.tempF)
-        setConditions(data.conditions)
-        console.log('test')
-      })
-      .catch(e => {
-        setError(true)
-        console.log(e)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Deploying React App</h1>
-      </header>
-      <main>
-        <h2>Check Your Local Weather</h2>
-        <div className='list-wrapper'>Enter a place. Valid entries include:
-          <ul>
-            <li>city,state</li>
-            <li>lat,long</li>
-            <li>city,country</li>
-            <li>US / CA postal code</li>
-          </ul>
+  async componentDidMount() {
+    this.subscription = API.graphql(
+      graphqlOperation(onCreateMessage)
+    ).subscribe({
+      next: event => {
+        if (event){
+          console.log("Subscription: " + JSON.stringify(event.value.data, null, 2));
+          this.setState({ display: true });
+          this.setState({ message: event.value.data.onCreateMessage.message });
+        }
+      }
+    });
+  }
+
+  handleChange(event) {
+    this.setState({ value: event.target.value });
+  }
+
+  async handleSubmit(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const message = {
+      id: "",
+      message: this.state.value,
+      createdAt: ""
+    };
+    const mutation = await API.graphql(
+      graphqlOperation(createMessage, message)
+    );
+    console.log("Mutation: " + JSON.stringify(mutation.data, null, 2));
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <img src={logo} className="App-logo" alt="logo" />
+        <div className="jumbotron jumbotron-fluid p-0">
+          <h2 className="center">Broadcaster</h2>
         </div>
-        <form onSubmit={fetchWeather}>
-          <fieldset>
-            <label>
-              Enter location
+        <br />
+        <div className="container">
+          <form onSubmit={this.handleSubmit}>
+            <div className="form-group">
               <input
-                type='text'
-                value={location}
-                placeholder='seattle,wa'
-                onChange={(e) => setLocation(e.target.value)}
+                className="form-control form-control-lg"
+                type="text"
+                value={this.state.value}
+                onChange={this.handleChange}
               />
-            </label>
-            <button type='submit'>Get Weather</button>
-          </fieldset>
-        </form>
-
-        <h2>Current Conditions</h2>
-        {loading && <p style={{ color: "#CCC" }}>Fetching weather data...</p>}
-        {error && <p style={{ color: "red" }}>Something went wrong...</p>}
-
-        {tempC && <p>{tempC} degrees Celcius</p>}
-        {tempF && <p>{tempF} degrees Fahrenheit</p>}
-
-        {conditions && <p>{conditions}</p>}
-        {!location && !loading && <p>Please enter a location</p>}
-      </main>
-    </div>
-  );
+            </div>
+            <input
+              type="submit"
+              value="Submit"
+              className="btn btn-primary"
+            />
+          </form>
+        </div>
+        <br />
+        {this.state.display ? (
+          <div className="container">
+            <div className="card bg-success">
+              <h3 className="card-text text-white p-2">
+                {this.state.message}
+              </h3>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
 }
 
 export default App;
