@@ -1,112 +1,77 @@
-import React, { Component } from "react";
-import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-import logo from "./logo.svg";
-import Amplify from "@aws-amplify/core";
-import "@aws-amplify/pubsub";
-import API, { graphqlOperation } from "@aws-amplify/api";
-import aws_exports from "./aws-exports"; 
-Amplify.configure(aws_exports);
+import React from 'react';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import reducers from './reducers';
+import {
+  TdsGlobalHeader,
+  TdsGlobalFooter,
+  TdsNav,
+  TdsNavList,
+  TdsNavItem,
+} from '@trv-tds/react';
+import './styles/app.scss';
+import { BrowserRouter, Link, Route } from 'react-router-dom';
 
-const createMessage = `mutation createMessage($message: String!){
-    createMessage(input:{message:$message}) {
-    __typename
-    id
-    message
-    createdAt
-    }
-}
-`;
+import DID_Idea from './components/DID_Idea';
+import Personal from './components/Personal';
+import Commercial from './components/Commercial';
+import carInsuranceExample from './components/CarInsurance';
+import HttpExample from './components/HttpExample';
 
-const onCreateMessage = `subscription onCreateMessage {
-    onCreateMessage {
-    __typename
-    message
-    }
-}`;
+import { SocketProvider } from './socket-provider';
+import SocketListener from './components/SocketListener'
+let store = createStore(reducers);
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      message: "",
-      value: "",
-      display: false
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+function App() {
 
-  async componentDidMount() {
-    this.subscription = API.graphql(
-      graphqlOperation(onCreateMessage)
-    ).subscribe({
-      next: event => {
-        if (event){
-          console.log("Subscription: " + JSON.stringify(event.value.data, null, 2));
-          this.setState({ display: true });
-          this.setState({ message: event.value.data.onCreateMessage.message });
-        }
-      }
-    });
-  }
-
-  handleChange(event) {
-    this.setState({ value: event.target.value });
-  }
-
-  async handleSubmit(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const message = {
-      id: "",
-      message: this.state.value,
-      createdAt: ""
-    };
-    const mutation = await API.graphql(
-      graphqlOperation(createMessage, message)
-    );
-    console.log("Mutation: " + JSON.stringify(mutation.data, null, 2));
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <img src={logo} className="App-logo" alt="logo" />
-        <div className="jumbotron jumbotron-fluid p-0">
-          <h2 className="center">Broadcaster</h2>
-        </div>
-        <br />
-        <div className="container">
-          <form onSubmit={this.handleSubmit}>
-            <div className="form-group">
-              <input
-                className="form-control form-control-lg"
-                type="text"
-                value={this.state.value}
-                onChange={this.handleChange}
-              />
-            </div>
-            <input
-              type="submit"
-              value="Submit"
-              className="btn btn-primary"
-            />
-          </form>
-        </div>
-        <br />
-        {this.state.display ? (
-          <div className="container">
-            <div className="card bg-success">
-              <h3 className="card-text text-white p-2">
-                {this.state.message}
-              </h3>
-            </div>
+  return (
+    <SocketProvider>
+    <Provider store={store}>
+      <BrowserRouter>
+        <TdsGlobalHeader homehref="/" homelabel="Home" product="Decentralized Idenity App">
+          <div slot="nav">
+            <TdsNav
+              variant="row"
+              variant-at="lg"
+              row-second-level-style="popover"
+            >
+              <TdsNavList>
+                <TdsNavItem href="/">Home</TdsNavItem>
+                <TdsNavItem>
+                  <Link to="/personal">Personal</Link>
+                </TdsNavItem>
+                <TdsNavItem>
+                  <Link to="/commercial">Commercial</Link>
+                </TdsNavItem>
+                {/* <TdsNavItem>
+                  <Link to="/car">Car Insurance</Link>
+                </TdsNavItem>
+                <TdsNavItem>
+                  <Link to="/http">Home Insurance</Link>
+                </TdsNavItem>
+                <TdsNavItem>
+                  <Link to="/http">Boat Insurance</Link>
+                </TdsNavItem> */}
+              </TdsNavList>
+            </TdsNav>
           </div>
-        ) : null}
-      </div>
-    );
-  }
+        </TdsGlobalHeader>
+        <div role="main" className="tds-body">
+          <Route exact path="/" component={DID_Idea} />
+          <div className="tds-container-fluid">
+            <Route exact path="/personal" component={Personal} />
+            <Route exact path="/commercial" component={Commercial} />
+            <Route exact path="/car" component={carInsuranceExample} />
+            <Route exact path="/http" component={HttpExample} />
+
+            <SocketListener />
+          </div>
+        </div>
+        <TdsGlobalFooter sociallinks="true"></TdsGlobalFooter>
+      </BrowserRouter>
+    </Provider>
+  </SocketProvider>
+  );
 }
 
 export default App;

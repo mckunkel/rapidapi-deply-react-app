@@ -1,0 +1,43 @@
+// root-level scss file
+// import all partials and external styles here
+// this is imported in App.js so that all styles are
+// available to the entire application
+@import '~@trv-tds/core/dist/css/tds.css';
+@import '_variables';
+@import '_nav';
+
+
+/* To be removed when TDS adds the classes */
+.hero {
+  margin-bottom: 1.2rem;
+  min-height: 12rem;
+  text-align: center;
+  width: 100%;
+  background-color: #f6f6f6;
+  padding: 2.4rem 1.2rem;
+}
+
+.hero h1 {
+  margin-top: 0;
+}
+
+@media (min-width: 35.9375em) {
+  .hero {
+    padding: 3.6rem 1.2rem;
+  }
+
+  .hero a {
+    width: auto;
+  }
+}
+
+@media (min-width: 50em) {
+  .hero {
+    padding: 5.4rem 1.2rem;
+  }
+}
+
+.tds-centered {
+  text-align: center;
+}
+

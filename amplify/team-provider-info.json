@@ -17,6 +17,12 @@
           "appId": "dy6qm00lv4c95",
           "type": "cicd"
         }
+      },
+      "function": {
+        "weather": {
+          "deploymentBucketName": "amplify-rapidapideplyreactap-dev-142012-deployment",
+          "s3Key": "amplify-builds/weather-6130574f5763416a304d-build.zip"
+        }
       }
     }
   }
